@@ -22,3 +22,8 @@ pub async fn get_all_flight_plans() -> impl Responder {
      }
   }
 }
+
+#[get("/api/v1/flightplan/{flight_plan_id}")]
+pub async fn get_flight_plan_by_id(path: web::Path<String>) -> impl Responder {
+  
+}
