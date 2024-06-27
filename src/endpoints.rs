@@ -25,5 +25,15 @@ pub async fn get_all_flight_plans() -> impl Responder {
 
 #[get("/api/v1/flightplan/{flight_plan_id}")]
 pub async fn get_flight_plan_by_id(path: web::Path<String>) -> impl Responder {
+  let flight_plan_id = path.into_inner();
+  let db_result = database::get_flight_plan_by_id(flight_plan_id.clone()).unwrap();
   
+  match db_result {
+      Some(flight_plan_from_db) => {
+          return HttpResponse::Ok().json(flight_plan_from_db);
+      },
+      None => {
+          return HttpResponse::NotFound().body(format!("There is not any flight plan with id {}", flight_plan_id));
+      }
+  }
 }
