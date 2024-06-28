@@ -114,3 +114,17 @@ pub fn delete_flight_plan(plan_id: String) -> Result<bool, Box<dyn Error>> {
   Ok(successful)
 }
 
+pub fn insert_flight_plan(flight_plan: FlightPlan) -> Result<(), Box<dyn Error>> {
+  let connection = get_database_connection()?;
+  let new_flight_plan_id = Uuid::new_v4().simple().to_string();
+
+  let mut statement = connection.prepare("INSERT INTO flight_plan (flight_plan_id, altitude, airspeed, aircraft_identification, \
+                                                       aircraft_type, arrival_airport, departing_airport, flight_type, departure_time, \
+                                                       estimated_arrival_time, route, remarks, fuel_hours, fuel_minutes, number_onboard) \
+                                                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")?;
+  let _ = statement.execute((new_flight_plan_id, flight_plan.altitude, flight_plan.airspeed, flight_plan.aircraft_identification,
+                                    flight_plan.aircraft_type, flight_plan.arrival_airport, flight_plan.departing_airport, flight_plan.flight_type,
+                                    flight_plan.departure_time, flight_plan.estimated_arrival_time, flight_plan.route, flight_plan.remarks,
+                                    flight_plan.fuel_hours, flight_plan.fuel_minutes, flight_plan.number_onboard))?;
+  Ok(())
+}
