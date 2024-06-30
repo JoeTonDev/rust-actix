@@ -54,3 +54,32 @@ pub async fn delete_flight_plan_by_id(path: web::Path<String>) -> impl Responder
         }
     }
 }
+
+#[post("/api/v1/flightplan")]
+pub async fn file_flight_plan(flight_plan: web::Json<FlightPlan>) -> impl Responder {
+    match insert_flight_plan(flight_plan.into_inner()) {
+        Ok(_) => {
+            HttpResponse::Ok().finish()
+        }
+        Err(_) => {
+            HttpResponse::InternalServerError().finish()
+        }
+    }
+}
+
+#[put("/api/v1/flightplan")]
+pub async fn update_flight_plan(flight_plan: web::Json<FlightPlan>) -> impl Responder {
+    let updated_flight_plan = flight_plan.into_inner();
+    match database::update_flight_plan(updated_flight_plan.clone()) {
+        Ok(succeeded) => {
+            if succeeded {
+                HttpResponse::Ok().finish()
+            } else {
+                HttpResponse::NotFound().body(format!("There is not any flight plan with id {}", updated_flight_plan.flight_plan_id))
+            }            
+        }
+        Err(_) => {
+            HttpResponse::InternalServerError().finish()
+        }
+    }
+}
