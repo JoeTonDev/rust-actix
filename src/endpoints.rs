@@ -37,3 +37,20 @@ pub async fn get_flight_plan_by_id(path: web::Path<String>) -> impl Responder {
       }
   }
 }
+
+#[delete("/api/v1/flightplan/{flight_plan_id}")]
+pub async fn delete_flight_plan_by_id(path: web::Path<String>) -> impl Responder {
+    let flight_plan_id = path.into_inner();
+    match database::delete_flight_plan(flight_plan_id.clone()) {
+        Ok(successful) => {
+            if successful {
+                HttpResponse::Ok().finish()
+            } else {
+                HttpResponse::NotFound().body(format!("There is not any flight plan with id {}", flight_plan_id))
+            }            
+        }
+        Err(_) => {
+            HttpResponse::InternalServerError().finish()
+        }
+    }
+}
