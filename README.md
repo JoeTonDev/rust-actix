@@ -1,1 +1,1 @@
-Rust web APIs using Actix.
+REST APIs using Rust with Actix Web.
